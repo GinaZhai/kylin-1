@@ -334,9 +334,9 @@ public class ITJDBCDriverTest extends HBaseMetadataTestCase {
 
         QueryService queryService = new QueryService();
         int maxTotalPerKey = queryService.preparedContextPool.getMaxTotalPerKey();
-        Assert.assertTrue(maxTotalPerKey < 50);
+        Assert.assertEquals(50, maxTotalPerKey);
         int maxTotal = queryService.preparedContextPool.getMaxTotal();
-        Assert.assertTrue(maxTotal < 50000);
+        Assert.assertEquals(50000, maxTotal);
         queryService.preparedContextPool.addObject(new QueryService.PreparedContextKey("sparktest", 1,
                 "select count(1) as TRANS_CNT from test_kylin_fact where LSTG_FORMAT_NAME like ?"));
 
