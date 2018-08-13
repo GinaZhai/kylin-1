@@ -150,7 +150,7 @@ public class QueryService extends BasicService {
     @Autowired
     private AclEvaluate aclEvaluate;
 
-    private GenericKeyedObjectPool<PreparedContextKey, PreparedContext> preparedContextPool;
+    public GenericKeyedObjectPool<PreparedContextKey, PreparedContext> preparedContextPool;
 
     public QueryService() {
         queryStore = ResourceStore.getStore(getConfig());
@@ -1176,7 +1176,7 @@ public class QueryService extends BasicService {
         }
     }
 
-    private static class PreparedContextKey {
+    public static class PreparedContextKey {
         private String project;
         private long prjLastModifyTime;
         private String sql;

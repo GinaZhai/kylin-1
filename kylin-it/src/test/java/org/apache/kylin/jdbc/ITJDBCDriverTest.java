@@ -32,6 +32,7 @@ import java.util.Random;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.kylin.common.util.HBaseMetadataTestCase;
+import org.apache.kylin.rest.service.QueryService;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.junit.AfterClass;
@@ -325,6 +326,19 @@ public class ITJDBCDriverTest extends HBaseMetadataTestCase {
         rs.close();
         statement.close();
         conn.close();
+
+    }
+
+    @Test
+    public void testPreparedStatementWithPool() throws Exception {
+
+        QueryService queryService = new QueryService();
+        int maxTotalPerKey = queryService.preparedContextPool.getMaxTotalPerKey();
+        Assert.assertTrue(maxTotalPerKey < 50);
+        int maxTotal = queryService.preparedContextPool.getMaxTotal();
+        Assert.assertTrue(maxTotal < 50000);
+        queryService.preparedContextPool.addObject(new QueryService.PreparedContextKey("sparktest", 1,
+                "select count(1) as TRANS_CNT from test_kylin_fact where LSTG_FORMAT_NAME like ?"));
 
     }
 
