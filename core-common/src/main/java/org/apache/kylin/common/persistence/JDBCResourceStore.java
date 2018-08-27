@@ -35,7 +35,7 @@ public class JDBCResourceStore extends ResourceStore {
 
     private static final String JDBC_SCHEME = "jdbc";
 
-    private String tableName;
+    private String[] tablesName = new String[2];
 
     private JDBCResourceDAO resourceDAO;
 
@@ -43,8 +43,9 @@ public class JDBCResourceStore extends ResourceStore {
         super(kylinConfig);
         StorageURL metadataUrl = kylinConfig.getMetadataUrl();
         checkScheme(metadataUrl);
-        this.tableName = metadataUrl.getIdentifier();
-        this.resourceDAO = new JDBCResourceDAO(kylinConfig, tableName);
+        tablesName[0] = metadataUrl.getIdentifier();
+        tablesName[1] = metadataUrl.getIdentifier() + "1";
+        this.resourceDAO = new JDBCResourceDAO(kylinConfig, tablesName);
     }
 
     @Override
@@ -154,7 +155,7 @@ public class JDBCResourceStore extends ResourceStore {
 
     @Override
     protected String getReadableResourcePathImpl(String resPath) {
-        return tableName + "(key='" + resPath + "')@" + kylinConfig.getMetadataUrl();
+        return tablesName + "(key='" + resPath + "')@" + kylinConfig.getMetadataUrl();
     }
 
     private String makeFolderPath(String folderPath) {

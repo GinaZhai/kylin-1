@@ -59,18 +59,22 @@ public class JDBCResourceDAO {
 
     private String tableName;
 
+    private String[] tablesName;
+
     private KylinConfig kylinConfig;
 
     // For test
     private long queriedSqlNum = 0;
 
-    public JDBCResourceDAO(KylinConfig kylinConfig, String tableName) throws SQLException {
-        this.tableName = tableName;
+    public JDBCResourceDAO(KylinConfig kylinConfig, String[] tablesName) throws SQLException {
         this.kylinConfig = kylinConfig;
         this.connectionManager = JDBCConnectionManager.getConnectionManager();
         this.jdbcSqlQueryFormat = JDBCSqlQueryFormatProvider.createJDBCSqlQueriesFormat(kylinConfig.getMetadataDialect());
-        createTableIfNeeded(tableName);
-        createIndex("IDX_" + META_TABLE_TS, tableName, META_TABLE_TS);
+        this.tablesName = tablesName;
+        for (int i = 0; i < tablesName.length; i++) {
+            createTableIfNeeded(tablesName[i]);
+            createIndex("IDX_" + META_TABLE_TS, tablesName[i], META_TABLE_TS);
+        }
     }
 
     public void close() {
@@ -90,6 +94,7 @@ public class JDBCResourceDAO {
         executeSql(new SqlOperation() {
             @Override
             public void execute(Connection connection) throws SQLException {
+                tableName = getMetaTableName(resourcePath);
                 pstat = connection.prepareStatement(getKeyEqualSqlString(fetchContent, fetchTimestamp));
                 pstat.setString(1, resourcePath);
                 rs = pstat.executeQuery();
@@ -136,6 +141,7 @@ public class JDBCResourceDAO {
         executeSql(new SqlOperation() {
             @Override
             public void execute(Connection connection) throws SQLException {
+                tableName = getMetaTableName(folderPath);
                 pstat = connection.prepareStatement(getListResourceSqlString());
                 pstat.setString(1, folderPath + "%");
                 rs = pstat.executeQuery();
@@ -161,6 +167,7 @@ public class JDBCResourceDAO {
         executeSql(new SqlOperation() {
             @Override
             public void execute(Connection connection) throws SQLException {
+                tableName = getMetaTableName(folderPath);
                 pstat = connection.prepareStatement(getAllResourceSqlString());
                 pstat.setString(1, folderPath + "%");
                 pstat.setLong(2, timeStart);
@@ -212,6 +219,7 @@ public class JDBCResourceDAO {
         executeSql(new SqlOperation() {
             @Override
             public void execute(Connection connection) throws SQLException {
+                tableName = getMetaTableName(resourcePath);
                 pstat = connection.prepareStatement(getDeletePstatSql());
                 pstat.setString(1, resourcePath);
                 pstat.executeUpdate();
@@ -245,6 +253,7 @@ public class JDBCResourceDAO {
                 byte[] content = getResourceDataBytes(resource);
                 synchronized (resource.getPath().intern()) {
                     boolean existing = existResource(resource.getPath());
+                    tableName = getMetaTableName(resource.getPath());
                     if (existing) {
                         pstat = connection.prepareStatement(getReplaceSql());
                         pstat.setLong(1, resource.getTimestamp());
@@ -294,6 +303,7 @@ public class JDBCResourceDAO {
             @Override
             public void execute(Connection connection) throws SQLException {
                 synchronized (resPath.intern()) {
+                    tableName = getMetaTableName(resPath);
                     if (!existResource(resPath)) {
                         if (oldTS != 0) {
                             throw new IllegalStateException(
@@ -664,6 +674,18 @@ public class JDBCResourceDAO {
 
     public long getQueriedSqlNum() {
         return queriedSqlNum;
+    }
+
+    public String getMetaTableName(String resPath) {
+        if (resPath.startsWith(ResourceStore.BAD_QUERY_RESOURCE_ROOT) || resPath.startsWith(ResourceStore.CUBE_STATISTICS_ROOT)
+                || resPath.startsWith(ResourceStore.DICT_RESOURCE_ROOT) || resPath.startsWith(ResourceStore.EXECUTE_RESOURCE_ROOT)
+                || resPath.startsWith(ResourceStore.EXECUTE_OUTPUT_RESOURCE_ROOT) || resPath.startsWith(ResourceStore.EXT_SNAPSHOT_RESOURCE_ROOT)
+                || resPath.startsWith(ResourceStore.TEMP_STATMENT_RESOURCE_ROOT)) {
+            tableName = tablesName[1];
+        } else {
+            tableName = tablesName[0];
+        }
+        return tableName;
     }
 
 }
