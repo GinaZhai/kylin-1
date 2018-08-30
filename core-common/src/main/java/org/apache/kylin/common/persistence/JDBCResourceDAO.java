@@ -57,8 +57,6 @@ public class JDBCResourceDAO {
 
     private JDBCSqlQueryFormat jdbcSqlQueryFormat;
 
-    volatile private String tableName;
-
     private String[] tablesName;
 
     private KylinConfig kylinConfig;
@@ -94,8 +92,8 @@ public class JDBCResourceDAO {
         executeSql(new SqlOperation() {
             @Override
             public void execute(Connection connection) throws SQLException {
-                tableName = getMetaTableName(resourcePath);
-                pstat = connection.prepareStatement(getKeyEqualSqlString(fetchContent, fetchTimestamp));
+                String tableName = getMetaTableName(resourcePath);
+                pstat = connection.prepareStatement(getKeyEqualSqlString(tableName, fetchContent, fetchTimestamp));
                 pstat.setString(1, resourcePath);
                 rs = pstat.executeQuery();
                 if (rs.next()) {
@@ -141,8 +139,8 @@ public class JDBCResourceDAO {
         executeSql(new SqlOperation() {
             @Override
             public void execute(Connection connection) throws SQLException {
-                tableName = getMetaTableName(folderPath);
-                pstat = connection.prepareStatement(getListResourceSqlString());
+                String tableName = getMetaTableName(folderPath);
+                pstat = connection.prepareStatement(getListResourceSqlString(tableName));
                 pstat.setString(1, folderPath + "%");
                 rs = pstat.executeQuery();
                 while (rs.next()) {
@@ -167,8 +165,8 @@ public class JDBCResourceDAO {
         executeSql(new SqlOperation() {
             @Override
             public void execute(Connection connection) throws SQLException {
-                tableName = getMetaTableName(folderPath);
-                pstat = connection.prepareStatement(getAllResourceSqlString());
+                String tableName = getMetaTableName(folderPath);
+                pstat = connection.prepareStatement(getAllResourceSqlString(tableName));
                 pstat.setString(1, folderPath + "%");
                 pstat.setLong(2, timeStart);
                 pstat.setLong(3, timeEndExclusive);
@@ -219,8 +217,8 @@ public class JDBCResourceDAO {
         executeSql(new SqlOperation() {
             @Override
             public void execute(Connection connection) throws SQLException {
-                tableName = getMetaTableName(resourcePath);
-                pstat = connection.prepareStatement(getDeletePstatSql());
+                String tableName = getMetaTableName(resourcePath);
+                pstat = connection.prepareStatement(getDeletePstatSql(tableName));
                 pstat.setString(1, resourcePath);
                 pstat.executeUpdate();
             }
@@ -253,14 +251,14 @@ public class JDBCResourceDAO {
                 byte[] content = getResourceDataBytes(resource);
                 synchronized (resource.getPath().intern()) {
                     boolean existing = existResource(resource.getPath());
-                    tableName = getMetaTableName(resource.getPath());
+                    String tableName = getMetaTableName(resource.getPath());
                     if (existing) {
-                        pstat = connection.prepareStatement(getReplaceSql());
+                        pstat = connection.prepareStatement(getReplaceSql(tableName));
                         pstat.setLong(1, resource.getTimestamp());
                         pstat.setBlob(2, new BufferedInputStream(new ByteArrayInputStream(content)));
                         pstat.setString(3, resource.getPath());
                     } else {
-                        pstat = connection.prepareStatement(getInsertSql());
+                        pstat = connection.prepareStatement(getInsertSql(tableName));
                         pstat.setString(1, resource.getPath());
                         pstat.setLong(2, resource.getTimestamp());
                         pstat.setBlob(3, new BufferedInputStream(new ByteArrayInputStream(content)));
@@ -303,7 +301,7 @@ public class JDBCResourceDAO {
             @Override
             public void execute(Connection connection) throws SQLException {
                 synchronized (resPath.intern()) {
-                    tableName = getMetaTableName(resPath);
+                    String tableName = getMetaTableName(resPath);
                     if (!existResource(resPath)) {
                         if (oldTS != 0) {
                             throw new IllegalStateException(
@@ -311,7 +309,7 @@ public class JDBCResourceDAO {
                         }
                         if (isContentOverflow(content, resPath)) {
                             logger.debug("Overflow! resource path: {}, content size: {}", resPath, content.length);
-                            pstat = connection.prepareStatement(getInsertSqlWithoutContent());
+                            pstat = connection.prepareStatement(getInsertSqlWithoutContent(tableName));
                             pstat.setString(1, resPath);
                             pstat.setLong(2, newTS);
                             writeLargeCellToHdfs(resPath, content);
@@ -324,7 +322,7 @@ public class JDBCResourceDAO {
                                 throw e;
                             }
                         } else {
-                            pstat = connection.prepareStatement(getInsertSql());
+                            pstat = connection.prepareStatement(getInsertSql(tableName));
                             pstat.setString(1, resPath);
                             pstat.setLong(2, newTS);
                             pstat.setBlob(3, new BufferedInputStream(new ByteArrayInputStream(content)));
@@ -333,7 +331,7 @@ public class JDBCResourceDAO {
                     } else {
                         // Note the checkAndPut trick:
                         // update {0} set {1}=? where {2}=? and {3}=?
-                        pstat = connection.prepareStatement(getUpdateSqlWithoutContent());
+                        pstat = connection.prepareStatement(getUpdateSqlWithoutContent(tableName));
                         pstat.setLong(1, newTS);
                         pstat.setString(2, resPath);
                         pstat.setLong(3, oldTS);
@@ -346,7 +344,7 @@ public class JDBCResourceDAO {
                         PreparedStatement pstat2 = null;
                         try {
                             // "update {0} set {1}=? where {3}=?"
-                            pstat2 = connection.prepareStatement(getUpdateContentSql());
+                            pstat2 = connection.prepareStatement(getUpdateContentSql(tableName));
                             if (isContentOverflow(content, resPath)) {
                                 logger.debug("Overflow! resource path: {}, content size: {}", resPath, content.length);
                                 pstat2.setNull(1, Types.BLOB);
@@ -497,61 +495,61 @@ public class JDBCResourceDAO {
         return sql;
     }
 
-    private String getKeyEqualSqlString(boolean fetchContent, boolean fetchTimestamp) {
+    private String getKeyEqualSqlString(String tableName, boolean fetchContent, boolean fetchTimestamp) {
         String sql = MessageFormat.format(jdbcSqlQueryFormat.getKeyEqualsSql(),
                 getSelectList(fetchContent, fetchTimestamp), tableName, META_TABLE_KEY);
         return sql;
     }
 
-    private String getDeletePstatSql() {
+    private String getDeletePstatSql(String tableName) {
         String sql = MessageFormat.format(jdbcSqlQueryFormat.getDeletePstatSql(), tableName, META_TABLE_KEY);
         return sql;
     }
 
-    private String getListResourceSqlString() {
+    private String getListResourceSqlString(String tableName) {
         String sql = MessageFormat.format(jdbcSqlQueryFormat.getListResourceSql(), META_TABLE_KEY, tableName,
                 META_TABLE_KEY);
         return sql;
     }
 
-    private String getAllResourceSqlString() {
+    private String getAllResourceSqlString(String tableName) {
         String sql = MessageFormat.format(jdbcSqlQueryFormat.getAllResourceSql(), getSelectList(true, true), tableName,
                 META_TABLE_KEY, META_TABLE_TS, META_TABLE_TS);
         return sql;
     }
 
-    private String getReplaceSql() {
+    private String getReplaceSql(String tableName) {
         String sql = MessageFormat.format(jdbcSqlQueryFormat.getReplaceSql(), tableName, META_TABLE_TS,
                 META_TABLE_CONTENT, META_TABLE_KEY);
         return sql;
     }
 
-    private String getInsertSql() {
+    private String getInsertSql(String tableName) {
         String sql = MessageFormat.format(jdbcSqlQueryFormat.getInsertSql(), tableName, META_TABLE_KEY, META_TABLE_TS,
                 META_TABLE_CONTENT);
         return sql;
     }
 
     @SuppressWarnings("unused")
-    private String getReplaceSqlWithoutContent() {
+    private String getReplaceSqlWithoutContent(String tableName) {
         String sql = MessageFormat.format(jdbcSqlQueryFormat.getReplaceSqlWithoutContent(), tableName, META_TABLE_TS,
                 META_TABLE_KEY);
         return sql;
     }
 
-    private String getInsertSqlWithoutContent() {
+    private String getInsertSqlWithoutContent(String tableName) {
         String sql = MessageFormat.format(jdbcSqlQueryFormat.getInsertSqlWithoutContent(), tableName, META_TABLE_KEY,
                 META_TABLE_TS);
         return sql;
     }
 
-    private String getUpdateSqlWithoutContent() {
+    private String getUpdateSqlWithoutContent(String tableName) {
         String sql = MessageFormat.format(jdbcSqlQueryFormat.getUpdateSqlWithoutContent(), tableName, META_TABLE_TS,
                 META_TABLE_KEY, META_TABLE_TS);
         return sql;
     }
 
-    private String getUpdateContentSql() {
+    private String getUpdateContentSql(String tableName) {
         String sql = MessageFormat.format(jdbcSqlQueryFormat.getUpdateContentSql(), tableName, META_TABLE_CONTENT,
                 META_TABLE_KEY);
         return sql;
