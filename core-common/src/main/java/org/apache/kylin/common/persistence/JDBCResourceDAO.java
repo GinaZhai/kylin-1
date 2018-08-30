@@ -57,7 +57,7 @@ public class JDBCResourceDAO {
 
     private JDBCSqlQueryFormat jdbcSqlQueryFormat;
 
-    private String tableName;
+    volatile private String tableName;
 
     private String[] tablesName;
 
@@ -681,11 +681,10 @@ public class JDBCResourceDAO {
                 || resPath.startsWith(ResourceStore.DICT_RESOURCE_ROOT) || resPath.startsWith(ResourceStore.EXECUTE_RESOURCE_ROOT)
                 || resPath.startsWith(ResourceStore.EXECUTE_OUTPUT_RESOURCE_ROOT) || resPath.startsWith(ResourceStore.EXT_SNAPSHOT_RESOURCE_ROOT)
                 || resPath.startsWith(ResourceStore.TEMP_STATMENT_RESOURCE_ROOT)) {
-            tableName = tablesName[1];
+            return tablesName[1];
         } else {
-            tableName = tablesName[0];
+            return tablesName[0];
         }
-        return tableName;
     }
 
 }
