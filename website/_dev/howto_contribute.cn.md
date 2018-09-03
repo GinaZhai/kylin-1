@@ -16,23 +16,23 @@ Apache Kylin 一直寻求的不只是代码的贡献，还寻求使用文档，�
 * `document`: 文档分支
 
 ## 组件及拥有者
-Apache Kylin 有几个子组件。为了更好地帮助社区的发展，我们为每个组件安排了一个或多个组件所有者。 
+Apache Kylin 有几个子组件。为了更好地帮助社区的发展，我们为每个组件安排了一个或多个组件负责人。 
 
-- 组件所有者是志愿者（组件领域的专家）。所有者需要成为 Apache Kylin 提交者或 PMC。 
+- 组件负责人是志愿者（组件领域的专家）。负责人需要成为 Apache Kylin 提交者或 PMC。 
 
-- 所有者将尝试审查其组件范围内的补丁。
+- 负责人将尝试审查其组件范围内的补丁。
 
-- 所有者可以根据他的愿望和社区需求进行轮换。
+- 负责人可以根据他的愿望和社区需求进行轮换。
 
-- 在提名或投票新提交者时，提名者需要说明候选人可以成为哪个组件的所有者。
+- 在提名或投票新提交者时，提名者需要说明候选人可以成为哪个组件的负责人。
 
-- 如果您已经是 Apache Kylin 提交者或 PMC 成员并希望成为组件所有者的志愿者，请给 dev 列表写信，我们将为您注册。 
+- 如果您已经是 Apache Kylin 提交者或 PMC 成员并希望成为组件负责人的志愿者，请给 dev 列表写信，我们将为您注册。 
 
 - 所有项目计划，决策仍由 Apache Kylin PMC 管理。
 
 - 如果您认为组件列表需要更新（添加，删除，重命名等），请给 dev 列表写信，我们将对其进行审核。
 
-组件所有者列在了这个 Apache Kylin [JIRA components page](https://issues.apache.org/jira/projects/KYLIN?selectedItem=com.atlassian.jira.jira-projects-plugin:components-page) 页面中的 Description 字段位置。所有者列在“Description”字段中而不是“Component Lead”字段中，因为后者仅允许我们列出一个人，然而其鼓励组件具有多个所有者。
+组件负责人列在了这个 Apache Kylin [JIRA components page](https://issues.apache.org/jira/projects/KYLIN?selectedItem=com.atlassian.jira.jira-projects-plugin:components-page) 页面中的 Description 字段位置。负责人列在“Description”字段中而不是“Component Lead”字段中，因为后者仅允许我们列出一个人，然而其鼓励组件具有多个负责人。
 
 ## 选择一个任务
 这里有新创建的任务等待被完成，由 JIRA 追踪。为了让其容易被搜索，这里有一些过滤条件。
@@ -95,9 +95,9 @@ $ ./dev-support/submit-patch.py -jid KYLIN-xxxxx -b master -srb
 
 ## Patch +1 政策
 
-在提交之前，适合单个组件范围的修补程序至少需要一个组件所有者的 +1。如果所有者不在 — 在忙或其他 — 两个非所有者（即两个提交者）的 +1，就足够了。
+在提交之前，适合单个组件范围的修补程序至少需要一个组件负责人的 +1。如果负责人不在 — 在忙或其他 — 两个非负责人（即两个提交者）的 +1，就足够了。
 
-跨组件的 patch 在提交之前至少需要两个 +1s，最好由 x-component patch 涉及的组件所有者的 +1。
+跨组件的 patch 在提交之前至少需要两个 +1s，最好由 x-component patch 涉及的组件负责人的 +1。
 
 任何人都可以在 patch 上 -1，任何 -1 都可以否决补丁；在解决 -1 的理由之前，它不能被提交。
 

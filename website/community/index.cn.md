@@ -6,52 +6,56 @@ permalink: /cn/community/index.html
 <div class="container" >
 	<div class="row">
 		<div class="col-sm-6 col-md-6">
-		    <h2> Apache Kylin™ 技术支持 </h2>
-			<p>想要了解更多关于谁使用 Apache Kylin™，请参考 <a href="/cn/community/poweredby.html">技术支持</a> 页面。</p>
+		    <h2> Apache Kylin 用户案例 </h2>
+			<p>想要了解谁在使用 Apache Kylin，请参考 <a href="/cn/community/poweredby.html">powered by</a> 页面。</p>
 		</div>
 
 		<div class="col-sm-6 col-md-6">
-		    <h2>社交媒体 </h2>
-		    <p>Kylin 官方的 Twitter 账号: <a href="https://twitter.com/ApacheKylin">@ApacheKylin</a></p>
+		    <h2> 社交媒体 </h2>
+		    <p>Apache Kylin 官方 Twitter 账号: <a href="https://twitter.com/ApacheKylin">@ApacheKylin</a></p>
 		</div>
 	</div>
 
 	<div class="row">
 		<div class="col-sm-6 col-md-6">
-		    <h2> Apache Kylin 邮件列表 </h2>
+		    <h2> Apache Kylin 邮件群组 </h2>
 
-		    <p>这是为这个工程建立的邮件列表。对于每一个列表，都有订阅、取消订阅和归档链接。</p>
+		    <p>如果您在使用 Kylin 过程中遇到问题，请加入 Kylin 邮件群组参与讨论，这是参与 Apache 项目讨论的正确方式。根据您的参与性质: 普通用户或开发者，可以分别订阅 user@kylin.apache.org 和 dev@kylin.apache.org 邮件群组。</p>
+
+			<p>
+		   	请先订阅 Kylin 邮件群组，再发邮件到对应的组，否则您的问题将会被阻止。
+			例如，如果您要订阅 user@kylin.apache.org，那么先发一个空邮件到 user-subscribe@kylin.apache.org，稍后您会收到一封确认邮件，对它进行回复即可完成订阅。在订阅成功后，请再发送您的问题到 user@kylin.apache.org，那么所有订阅该邮件组的其它用户将会收到您的邮件，并做出分享。</p>
 
 
 		    <p>  
-		    	<span>用户邮件列表</span>
+		    	<span>用户(user)邮件列表</span>
 		    	<span>
 		    		<a href="mailto:user-subscribe@kylin.apache.org">订阅</a>
 		    	</span>
 		    	<span>
-		    		<a href="mailto:user-unsubscribe@kylin.apache.org">取消订阅</a>
+		    		<a href="mailto:user-unsubscribe@kylin.apache.org">退订</a>
 		    	</span>
 		    	<span>
-		    	    <a href="mailto:user@kylin.apache.org">提交</a>
+		    	    <a href="mailto:user@kylin.apache.org">发送新邮件</a>
 		    	</span>
 		    	<span>
-		    	    <a href="http://mail-archives.apache.org/mod_mbox/kylin-user/">mail-archives.apache.org</a>
+		    	    <a href="http://mail-archives.apache.org/mod_mbox/kylin-user/">历史存档</a>
 		    	</span>
 		    </p>
 
 		    <p>  
-		    	<span>开发者邮件列表</span>
+		    	<span>开发者(dev)邮件列表</span>
 		    	<span>
 		    		<a href="mailto:dev-subscribe@kylin.apache.org">订阅</a>
 		    	</span>
 		    	<span>
-		    		<a href="mailto:dev-unsubscribe@kylin.apache.org">取消订阅</a>
+		    		<a href="mailto:dev-unsubscribe@kylin.apache.org">退订</a>
 		    	</span>
 		    	<span>
-		    	    <a href="mailto:dev@kylin.apache.org">提交</a>
+		    	    <a href="mailto:dev@kylin.apache.org">发送新邮件</a>
 		    	</span>
 		    	<span>
-		    	    <a href="http://mail-archives.apache.org/mod_mbox/kylin-dev//">mail-archives.apache.org</a>
+		    	    <a href="http://mail-archives.apache.org/mod_mbox/kylin-dev//">历史存档</a>
 		    	</span>
 		    </p>
 
@@ -61,11 +65,11 @@ permalink: /cn/community/index.html
 		    		<a href="mailto:issues-subscribe@kylin.apache.org">订阅</a>
 		    	</span>
 		    	<span>
-		    		<a href="mailto:issues-unsubscribe@kylin.apache.org">取消订阅</a>
+		    		<a href="mailto:issues-unsubscribe@kylin.apache.org">退订</a>
 		    	</span>
 		    	<span>N/A</span>
 		    	<span>
-		    	    <a href="http://mail-archives.apache.org/mod_mbox/kylin-issues/">mail-archives.apache.org</a>
+		    	    <a href="http://mail-archives.apache.org/mod_mbox/kylin-issues/">历史存档</a>
 		    	</span>
 		    </p>
 
@@ -75,11 +79,11 @@ permalink: /cn/community/index.html
 		    		<a href="mailto:commits-subscribe@kylin.apache.org">订阅</a>
 		    	</span>
 		    	<span>
-		    		<a href="mailto:commits-unsubscribe@kylin.apache.org">取消订阅</a>
+		    		<a href="mailto:commits-unsubscribe@kylin.apache.org">退订</a>
 		    	</span>
 		        <span>N/A</span>
 		    	<span>
-		    	    <a href="http://mail-archives.apache.org/mod_mbox/kylin-commits/">mail-archives.apache.org</a>
+		    	    <a href="http://mail-archives.apache.org/mod_mbox/kylin-commits/">历史存档</a>
 		    	</span>
 		    </p>
 		</div>
@@ -101,7 +105,7 @@ permalink: /cn/community/index.html
 		</div>
 
 		<div class="col-sm-6 col-md-6">
-		    <h2>Apache Kylin 团队</h2>
+		    <h2>Apache Kylin 开发团队</h2>
 		    <p>一个成功的项目需要很多人扮演不同的角色。一些成员编写代码，提供项目指导或写文档。其他人作为有价值的测试人员，提交补丁和建议。</p>
 		</div>
 	</div>
