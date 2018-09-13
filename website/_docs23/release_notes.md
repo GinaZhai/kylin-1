@@ -15,6 +15,7 @@ or send to Apache Kylin mailing list:
 * User relative: [user@kylin.apache.org](mailto:user@kylin.apache.org)
 * Development relative: [dev@kylin.apache.org](mailto:dev@kylin.apache.org)
 
+
 ## v2.3.2 - 2018-07-08
 _Tag:_ [kylin-2.3.2](https://github.com/apache/kylin/tree/kylin-2.3.2)
 This is a bug fix release after 2.3.1, with 12 bug fixes and enhancement. Check [How to upgrade](/docs23/howto/howto_upgrade.html).
