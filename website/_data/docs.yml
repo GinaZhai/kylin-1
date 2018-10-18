@@ -76,6 +76,7 @@
   - howto/howto_backup_metadata
   - howto/howto_cleanup_storage
   - howto/howto_upgrade
+  - howto/howto_use_cli
   - howto/howto_ldap_and_sso
   - howto/howto_use_beeline
   - howto/howto_update_coprocessor
