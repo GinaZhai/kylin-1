@@ -23,6 +23,9 @@ import static org.apache.kylin.cube.cuboid.CuboidModeEnum.CURRENT;
 import static org.apache.kylin.cube.cuboid.CuboidModeEnum.RECOMMEND;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -50,9 +53,11 @@ import org.apache.kylin.metadata.model.Segments;
 import org.apache.kylin.metadata.model.TblColRef;
 import org.apache.kylin.metadata.project.ProjectInstance;
 import org.apache.kylin.metadata.project.ProjectManager;
+import org.apache.kylin.metadata.project.RealizationEntry;
 import org.apache.kylin.metadata.realization.CapabilityResult;
 import org.apache.kylin.metadata.realization.CapabilityResult.CapabilityInfluence;
 import org.apache.kylin.metadata.realization.IRealization;
+import org.apache.kylin.metadata.realization.RealizationRegistry;
 import org.apache.kylin.metadata.realization.RealizationStatusEnum;
 import org.apache.kylin.metadata.realization.RealizationType;
 import org.apache.kylin.metadata.realization.SQLDigest;
@@ -76,6 +81,8 @@ public class CubeInstance extends RootPersistentEntity implements IRealization, 
     public static final int COST_WEIGHT_MEASURE = 1;
     public static final int COST_WEIGHT_DIMENSION = 10;
     public static final int COST_WEIGHT_INNER_JOIN = 100;
+
+    private volatile IRealization[] realizations = null;
 
     public static CubeInstance create(String cubeName, CubeDesc cubeDesc) {
         CubeInstance cubeInstance = new CubeInstance();
@@ -717,4 +724,48 @@ public class CubeInstance extends RootPersistentEntity implements IRealization, 
         throw new IllegalStateException("No segment's last build job ID equals " + jobID);
     }
 
+    public CubeInstance findLastSnapshot(List<RealizationEntry> realizationEntries, String lookupTableName) {
+        if (realizationEntries.size() > 0) {
+            List<IRealization> realizationList = Lists.newArrayList();
+            RealizationRegistry registry = RealizationRegistry.getInstance(config);
+            for (int i = 0; i < realizationEntries.size(); i++) {
+                IRealization realization = registry.getRealization(realizationEntries.get(i).getType(), realizationEntries.get(i).getRealization());
+                if (realization == null) {
+                    logger.error("Realization '" + realizationEntries.get(i) + " is not found '" + this.getName() + "'");
+                    continue;
+                }
+                if (realization.isReady() == false) {
+                    logger.error("Realization '" + realization.getName() + " is disabled '" + this.getName() + "'");
+                    continue;
+                }
+                if (realization.getModel().isLookupTable(lookupTableName)) {
+                    realizationList.add(realization);
+                }
+            }
+            this.realizations = realizationList.toArray(new IRealization[realizationList.size()]);
+            List<CubeInstance> allcubesList = new ArrayList<CubeInstance>();
+            for (int i = 0; i < realizations.length; i++) {
+                allcubesList.add((CubeInstance) realizations[i]);
+            }
+            Map<CubeInstance, Long> map = new HashMap();
+            for (CubeInstance cube : allcubesList) {
+                long lastBuildTime = cube.segments.getLatestReadySegment().getLastBuildTime();
+                map.put(cube, lastBuildTime);
+            }
+            long maxValue = 0;
+            CubeInstance cube = null;
+            Iterator it = map.entrySet().iterator();
+            for (int i = 0; i < map.size(); i++) {
+                Map.Entry entry = (Map.Entry) it.next();
+                long value = (long) entry.getValue();
+                if (value > maxValue) {
+                    maxValue = value;
+                    cube = (CubeInstance) entry.getKey();
+                }
+            }
+            return cube;
+        }
+        this.realizations = new IRealization[0];
+        return (CubeInstance) realizations[0];
+    }
 }
