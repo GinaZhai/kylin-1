@@ -23,6 +23,8 @@ import static org.apache.kylin.cube.cuboid.CuboidModeEnum.CURRENT;
 import static org.apache.kylin.cube.cuboid.CuboidModeEnum.RECOMMEND;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -50,9 +52,11 @@ import org.apache.kylin.metadata.model.Segments;
 import org.apache.kylin.metadata.model.TblColRef;
 import org.apache.kylin.metadata.project.ProjectInstance;
 import org.apache.kylin.metadata.project.ProjectManager;
+import org.apache.kylin.metadata.project.RealizationEntry;
 import org.apache.kylin.metadata.realization.CapabilityResult;
 import org.apache.kylin.metadata.realization.CapabilityResult.CapabilityInfluence;
 import org.apache.kylin.metadata.realization.IRealization;
+import org.apache.kylin.metadata.realization.RealizationRegistry;
 import org.apache.kylin.metadata.realization.RealizationStatusEnum;
 import org.apache.kylin.metadata.realization.RealizationType;
 import org.apache.kylin.metadata.realization.SQLDigest;
@@ -76,6 +80,11 @@ public class CubeInstance extends RootPersistentEntity implements IRealization, 
     public static final int COST_WEIGHT_MEASURE = 1;
     public static final int COST_WEIGHT_DIMENSION = 10;
     public static final int COST_WEIGHT_INNER_JOIN = 100;
+
+    private volatile IRealization[] realizations = null;
+    private long dateRangeStart;
+    private long dateRangeEnd;
+    private boolean isReady = false;
 
     public static CubeInstance create(String cubeName, CubeDesc cubeDesc) {
         CubeInstance cubeInstance = new CubeInstance();
@@ -717,4 +726,62 @@ public class CubeInstance extends RootPersistentEntity implements IRealization, 
         throw new IllegalStateException("No segment's last build job ID equals " + jobID);
     }
 
+    public IRealization getLatestRealization(List<RealizationEntry> realizationEntries, String lookupTableName) {
+        if (realizationEntries.size() > 0) {
+            List<IRealization> realizationList = Lists.newArrayList();
+            RealizationRegistry registry = RealizationRegistry.getInstance(config);
+            for (int i = 0; i < realizationEntries.size(); i++) {
+                IRealization realization = registry.getRealization(realizationEntries.get(i).getType(), realizationEntries.get(i).getRealization());
+                if (realization == null) {
+                    logger.error("Realization '" + realizationEntries.get(i) + " is not found '" + this.getName() + "'");
+                    continue;
+                }
+                if (realization.isReady() == false) {
+                    logger.error("Realization '" + realization.getName() + " is disabled '" + this.getName() + "'");
+                    continue;
+                }
+                if (realization.getModel().isLookupTable(lookupTableName)) {
+                    realizationList.add(realization);
+                }
+            }
+            dateRangeStart = 0;
+            dateRangeEnd = Long.MAX_VALUE;
+            for (IRealization realization : realizationList) {
+                if (realization.isReady())
+                    isReady = true;
+
+                if (dateRangeStart == 0 || realization.getDateRangeStart() < dateRangeStart)
+                    dateRangeStart = realization.getDateRangeStart();
+
+                if (dateRangeStart == Long.MAX_VALUE || realization.getDateRangeEnd() > dateRangeEnd)
+                    dateRangeEnd = realization.getDateRangeEnd();
+            }
+
+            Collections.sort(realizationList, new Comparator<IRealization>() {
+                @Override
+                public int compare(IRealization o1, IRealization o2) {
+
+                    long i1 = o1.getDateRangeStart();
+                    long i2 = o2.getDateRangeStart();
+                    long comp = i1 - i2;
+                    if (comp != 0) {
+                        return comp > 0 ? 1 : -1;
+                    }
+
+                    i1 = o1.getDateRangeEnd();
+                    i2 = o2.getDateRangeEnd();
+                    comp = i1 - i2;
+                    if (comp != 0) {
+                        return comp > 0 ? 1 : -1;
+                    }
+
+                    return 0;
+                }
+            });
+            this.realizations = realizationList.toArray(new IRealization[realizationList.size()]);
+            return realizations[realizations.length - 1];
+        }
+        this.realizations = new IRealization[1];
+        return realizations[0];
+    }
 }
