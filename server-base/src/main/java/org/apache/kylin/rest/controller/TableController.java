@@ -217,14 +217,14 @@ public class TableController extends BasicController {
         }
     }
 
-    @RequestMapping(value = "/{project}/{tableName}/{snapshotID}/snapshotLocalCache", method = { RequestMethod.PUT })
+    @RequestMapping(value = "/{project}/{tableName}/{snapshotID}/snapshotLocalCache", method = { RequestMethod.PUT }, produces = { "application/json" })
     @ResponseBody
     public void updateSnapshotLocalCache(@PathVariable final String project, @PathVariable final String tableName,
             @PathVariable final String snapshotID) {
         tableService.updateSnapshotLocalCache(project, tableName, snapshotID);
     }
 
-    @RequestMapping(value = "/{tableName}/{snapshotID}/snapshotLocalCache/state", method = { RequestMethod.GET })
+    @RequestMapping(value = "/{tableName}/{snapshotID}/snapshotLocalCache/state", method = { RequestMethod.GET }, produces = { "application/json" })
     @ResponseBody
     public String getSnapshotLocalCacheState(@PathVariable final String tableName,
             @PathVariable final String snapshotID) {
@@ -237,7 +237,7 @@ public class TableController extends BasicController {
         tableService.removeSnapshotLocalCache(tableName, snapshotID);
     }
 
-    @RequestMapping(value = "/{project}/{tableName}/snapshots", method = { RequestMethod.GET })
+    @RequestMapping(value = "/{project}/{tableName}/snapshots", method = { RequestMethod.GET }, produces = { "application/json" })
     @ResponseBody
     public List<TableSnapshotResponse> getTableSnapshots(@PathVariable final String project,
             @PathVariable final String tableName) throws IOException {

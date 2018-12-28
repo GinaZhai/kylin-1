@@ -100,7 +100,7 @@ public class StreamingV2Controller extends BasicController {
     @Qualifier("tableService")
     private TableService tableService;
 
-    @RequestMapping(value = "/getConfig", method = { RequestMethod.GET })
+    @RequestMapping(value = "/getConfig", method = { RequestMethod.GET }, produces = { "application/json" })
     @ResponseBody
     public List<StreamingSourceConfig> getStreamings(@RequestParam(value = "table", required = false) String table,
             @RequestParam(value = "limit", required = false) Integer limit,
@@ -119,7 +119,7 @@ public class StreamingV2Controller extends BasicController {
      * 
      * @throws IOException
      */
-    @RequestMapping(value = "", method = { RequestMethod.POST })
+    @RequestMapping(value = "", method = { RequestMethod.POST }, produces = { "application/json" })
     @ResponseBody
     public StreamingRequestV2 saveStreamingConfig(@RequestBody StreamingRequestV2 streamingRequest) {
         String project = streamingRequest.getProject();
@@ -249,7 +249,7 @@ public class StreamingV2Controller extends BasicController {
         return false;
     }
 
-    @RequestMapping(value = "/updateConfig", method = { RequestMethod.PUT })
+    @RequestMapping(value = "/updateConfig", method = { RequestMethod.PUT }, produces = { "application/json" })
     @ResponseBody
     public StreamingRequest updateStreamingConfig(@RequestBody StreamingRequest streamingRequest)
             throws JsonProcessingException {
@@ -274,7 +274,7 @@ public class StreamingV2Controller extends BasicController {
         return streamingRequest;
     }
 
-    @RequestMapping(value = "/{configName}", method = { RequestMethod.DELETE })
+    @RequestMapping(value = "/{configName}", method = { RequestMethod.DELETE }, produces = { "application/json" })
     @ResponseBody
     public void deleteConfig(@PathVariable String configName) throws IOException {
         StreamingSourceConfig config = streamingService.getStreamingManagerV2().getConfig(configName);
@@ -294,7 +294,7 @@ public class StreamingV2Controller extends BasicController {
         }
     }
 
-    @RequestMapping(value = "/parserTemplate", method = { RequestMethod.GET })
+    @RequestMapping(value = "/parserTemplate", method = { RequestMethod.GET }, produces = { "application/json" })
     @ResponseBody
     public String getParserTemplate(@RequestParam(value = "sourceType") int sourceType,
             @RequestParam(value = "streamingConfig") String streamingConfigStr) {
@@ -302,7 +302,7 @@ public class StreamingV2Controller extends BasicController {
         return streamingService.getParserTemplate(sourceType, streamingSourceConfig);
     }
 
-    @RequestMapping(value = "/cubeAssignments", method = { RequestMethod.GET })
+    @RequestMapping(value = "/cubeAssignments", method = { RequestMethod.GET }, produces = { "application/json" })
     @ResponseBody
     public List<CubeAssignment> getCubeAssignments(@RequestParam(value = "cube", required = false) String cube) {
         CubeInstance cubeInstance = null;
@@ -312,20 +312,20 @@ public class StreamingV2Controller extends BasicController {
         return streamingService.getStreamingCubeAssignments(cubeInstance);
     }
 
-    @RequestMapping(value = "/rsAssignments", method = { RequestMethod.GET })
+    @RequestMapping(value = "/rsAssignments", method = { RequestMethod.GET }, produces = { "application/json" })
     @ResponseBody
     public Map<Integer, Map<String, List<Partition>>> getReplicaSetAssignments(
             @RequestParam(value = "replicaSetID", required = false) Integer replicaSetID) {
         return streamingService.getStreamingReplicaSetAssignments(replicaSetID);
     }
 
-    @RequestMapping(value = "/balance/recommend", method = { RequestMethod.GET })
+    @RequestMapping(value = "/balance/recommend", method = { RequestMethod.GET }, produces = { "application/json" })
     @ResponseBody
     public Map<Integer, Map<String, List<Partition>>> reBalanceRecommend() {
         return streamingService.reBalancePlan();
     }
 
-    @RequestMapping(value = "/balance", method = { RequestMethod.POST })
+    @RequestMapping(value = "/balance", method = { RequestMethod.POST }, produces = { "application/json" })
     @ResponseBody
     public void reBalance(@RequestBody String reBalancePlanStr) {
         final String user = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -344,7 +344,7 @@ public class StreamingV2Controller extends BasicController {
         }
     }
 
-    @RequestMapping(value = "/cubeAssignments/{cubeName}", method = { RequestMethod.DELETE })
+    @RequestMapping(value = "/cubeAssignments/{cubeName}", method = { RequestMethod.DELETE }, produces = { "application/json" })
     @ResponseBody
     public void removeCubeAssignment(@PathVariable String cubeName) {
         final String user = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -352,19 +352,19 @@ public class StreamingV2Controller extends BasicController {
         streamingService.removeCubeAssignment();
     }
 
-    @RequestMapping(value = "/cubes", method = { RequestMethod.GET })
+    @RequestMapping(value = "/cubes", method = { RequestMethod.GET }, produces = { "application/json" })
     @ResponseBody
     public List<String> getStreamingCubes() {
         return streamingService.getStreamingCubes();
     }
 
-    @RequestMapping(value = "/cubes/{cubeName}/consumeState", method = { RequestMethod.GET })
+    @RequestMapping(value = "/cubes/{cubeName}/consumeState", method = { RequestMethod.GET }, produces = { "application/json" })
     @ResponseBody
     public String getStreamingCubeConsumeState(@PathVariable String cubeName) {
         return streamingService.getStreamingCubeConsumeState(cubeName).toString();
     }
 
-    @RequestMapping(value = "/cubes/{cubeName}/assign", method = { RequestMethod.PUT })
+    @RequestMapping(value = "/cubes/{cubeName}/assign", method = { RequestMethod.PUT }, produces = { "application/json" })
     @ResponseBody
     public void assignStreamingCube(@PathVariable String cubeName) {
         final String user = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -373,7 +373,7 @@ public class StreamingV2Controller extends BasicController {
         streamingService.assignCube(cube);
     }
 
-    @RequestMapping(value = "/cubes/{cubeName}/unAssign", method = { RequestMethod.PUT })
+    @RequestMapping(value = "/cubes/{cubeName}/unAssign", method = { RequestMethod.PUT }, produces = { "application/json" })
     @ResponseBody
     public void unAssignStreamingCube(@PathVariable String cubeName) {
         final String user = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -382,7 +382,7 @@ public class StreamingV2Controller extends BasicController {
         streamingService.unAssignCube(cube);
     }
 
-    @RequestMapping(value = "/cubes/{cubeName}/reAssign", method = { RequestMethod.POST })
+    @RequestMapping(value = "/cubes/{cubeName}/reAssign", method = { RequestMethod.POST }, produces = { "application/json" })
     @ResponseBody
     public void reAssignStreamingCube(@PathVariable String cubeName, @RequestBody CubeAssignment newAssignment) {
         final String user = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -390,20 +390,20 @@ public class StreamingV2Controller extends BasicController {
         streamingService.reAssignCube(cubeName, newAssignment);
     }
 
-    @RequestMapping(value = "/receivers", method = { RequestMethod.GET })
+    @RequestMapping(value = "/receivers", method = { RequestMethod.GET }, produces = { "application/json" })
     @ResponseBody
     public List<Node> getStreamingReceivers() {
         return streamingService.getReceivers();
     }
 
-    @RequestMapping(value = "/receivers/{receiverID:.+}", method = { RequestMethod.DELETE })
+    @RequestMapping(value = "/receivers/{receiverID:.+}", method = { RequestMethod.DELETE }, produces = { "application/json" })
     @ResponseBody
     public void removeStreamingReceiver(@PathVariable String receiverID) {
         Node receiver = Node.fromNormalizeString(receiverID);
         streamingService.removeReceiver(receiver);
     }
 
-    @RequestMapping(value = "/replicaSet", method = { RequestMethod.POST })
+    @RequestMapping(value = "/replicaSet", method = { RequestMethod.POST }, produces = { "application/json" })
     @ResponseBody
     public void createReplicaSet(@RequestBody ReplicaSet rs) {
         final String user = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -411,7 +411,7 @@ public class StreamingV2Controller extends BasicController {
         streamingService.createReplicaSet(rs);
     }
 
-    @RequestMapping(value = "/replicaSet/{replicaSetID}", method = { RequestMethod.DELETE })
+    @RequestMapping(value = "/replicaSet/{replicaSetID}", method = { RequestMethod.DELETE }, produces = { "application/json" })
     @ResponseBody
     public void removeReplicaSet(@PathVariable Integer replicaSetID) {
         final String user = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -419,13 +419,13 @@ public class StreamingV2Controller extends BasicController {
         streamingService.removeReplicaSet(replicaSetID);
     }
 
-    @RequestMapping(value = "/replicaSets", method = { RequestMethod.GET })
+    @RequestMapping(value = "/replicaSets", method = { RequestMethod.GET }, produces = { "application/json" })
     @ResponseBody
     public List<ReplicaSet> getReplicaSets() {
         return streamingService.getReplicaSets();
     }
 
-    @RequestMapping(value = "/replicaSet/{replicaSetID}/{nodeID:.+}", method = { RequestMethod.PUT })
+    @RequestMapping(value = "/replicaSet/{replicaSetID}/{nodeID:.+}", method = { RequestMethod.PUT }, produces = { "application/json" })
     @ResponseBody
     public void addNodeToReplicaSet(@PathVariable Integer replicaSetID, @PathVariable String nodeID) {
         final String user = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -433,7 +433,7 @@ public class StreamingV2Controller extends BasicController {
         streamingService.addNodeToReplicaSet(replicaSetID, nodeID);
     }
 
-    @RequestMapping(value = "/replicaSet/{replicaSetID}/{nodeID:.+}", method = { RequestMethod.DELETE })
+    @RequestMapping(value = "/replicaSet/{replicaSetID}/{nodeID:.+}", method = { RequestMethod.DELETE }, produces = { "application/json" })
     @ResponseBody
     public void removeNodeFromReplicaSet(@PathVariable Integer replicaSetID, @PathVariable String nodeID) {
         final String user = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -441,7 +441,7 @@ public class StreamingV2Controller extends BasicController {
         streamingService.removeNodeFromReplicaSet(replicaSetID, nodeID);
     }
 
-    @RequestMapping(value = "/cubes/{cubeName}/suspendConsume", method = { RequestMethod.PUT })
+    @RequestMapping(value = "/cubes/{cubeName}/suspendConsume", method = { RequestMethod.PUT }, produces = { "application/json" })
     @ResponseBody
     public void pauseCubeConsume(@PathVariable String cubeName) {
         final String user = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -450,7 +450,7 @@ public class StreamingV2Controller extends BasicController {
         streamingService.pauseConsumers(cube);
     }
 
-    @RequestMapping(value = "/cubes/{cubeName}/resumeConsume", method = { RequestMethod.PUT })
+    @RequestMapping(value = "/cubes/{cubeName}/resumeConsume", method = { RequestMethod.PUT }, produces = { "application/json" })
     @ResponseBody
     public void resumeCubeConsume(@PathVariable String cubeName) {
         final String user = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -459,21 +459,21 @@ public class StreamingV2Controller extends BasicController {
         streamingService.resumeConsumers(cube);
     }
 
-    @RequestMapping(value = "/cubes/{cubeName}/stats", method = { RequestMethod.GET })
+    @RequestMapping(value = "/cubes/{cubeName}/stats", method = { RequestMethod.GET }, produces = { "application/json" })
     @ResponseBody
     public CubeRealTimeState getCubeRealTimeState(@PathVariable String cubeName) {
         CubeInstance cube = cubeMgmtService.getCubeManager().getCube(cubeName);
         return streamingService.getCubeRealTimeState(cube);
     }
 
-    @RequestMapping(value = "/receivers/{receiverID:.+}/stats", method = { RequestMethod.GET })
+    @RequestMapping(value = "/receivers/{receiverID:.+}/stats", method = { RequestMethod.GET }, produces = { "application/json" })
     @ResponseBody
     public ReceiverStats getReceiverStats(@PathVariable String receiverID) {
         Node receiver = Node.fromNormalizeString(receiverID);
         return streamingService.getReceiverStats(receiver);
     }
 
-    @RequestMapping(value = "/cluster/state", method = { RequestMethod.GET })
+    @RequestMapping(value = "/cluster/state", method = { RequestMethod.GET }, produces = { "application/json" })
     @ResponseBody
     public ClusterState getClusterState() {
         return streamingService.getClusterState();

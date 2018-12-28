@@ -409,7 +409,7 @@ public class CubeController extends BasicController {
      * @param cubeName Cube ID
      * @return JobInstance of CheckpointExecutable
      */
-    @RequestMapping(value = "/{cubeName}/optimize", method = { RequestMethod.PUT })
+    @RequestMapping(value = "/{cubeName}/optimize", method = RequestMethod.PUT, produces = {"application/json"})
     @ResponseBody
     public JobInstance optimize(@PathVariable String cubeName, @RequestBody JobOptimizeRequest jobOptimizeRequest) {
         try {
@@ -437,7 +437,7 @@ public class CubeController extends BasicController {
      * @param cubeName  Cube ID
      * @param segmentID for segment to be optimized
      */
-    @RequestMapping(value = "/{cubeName}/recover_segment_optimize/{segmentID}", method = { RequestMethod.PUT })
+    @RequestMapping(value = "/{cubeName}/recover_segment_optimize/{segmentID}", method = RequestMethod.PUT, produces = {"application/json"})
     @ResponseBody
     public JobInstance recoverSegmentOptimize(@PathVariable String cubeName, @PathVariable String segmentID) {
         try {
@@ -788,7 +788,7 @@ public class CubeController extends BasicController {
 
     }
 
-    @RequestMapping(value = "/{cubeName}/cuboids/export", method = RequestMethod.GET)
+    @RequestMapping(value = "/{cubeName}/cuboids/export", method = RequestMethod.GET, produces = {"application/json"})
     @ResponseBody
     public void cuboidsExport(@PathVariable String cubeName, @RequestParam(value = "top") Integer top,
             HttpServletResponse response) throws IOException {
@@ -829,7 +829,7 @@ public class CubeController extends BasicController {
         }
     }
 
-    @RequestMapping(value = "/{cubeName}/cuboids/current", method = RequestMethod.GET)
+    @RequestMapping(value = "/{cubeName}/cuboids/current", method = RequestMethod.GET, produces = {"application/json"})
     @ResponseBody
     public CuboidTreeResponse getCurrentCuboids(@PathVariable String cubeName) {
         checkCubeExists(cubeName);
@@ -855,7 +855,7 @@ public class CubeController extends BasicController {
                 currentCuboidSet);
     }
 
-    @RequestMapping(value = "/{cubeName}/cuboids/recommend", method = RequestMethod.GET)
+    @RequestMapping(value = "/{cubeName}/cuboids/recommend", method = RequestMethod.GET, produces = {"application/json"})
     @ResponseBody
     public CuboidTreeResponse getRecommendCuboids(@PathVariable String cubeName) throws IOException {
         checkCubeExists(cubeName);
@@ -1022,7 +1022,7 @@ public class CubeController extends BasicController {
         }
     }
 
-    @RequestMapping(value = "/{cube}/{project}/migrate", method = { RequestMethod.POST })
+    @RequestMapping(value = "/{cube}/{project}/migrate", method = RequestMethod.POST, produces = {"application/json"})
     @ResponseBody
     public void migrateCube(@PathVariable String cube, @PathVariable String project) {
         CubeInstance cubeInstance = cubeService.getCubeManager().getCube(cube);

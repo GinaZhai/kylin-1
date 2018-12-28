@@ -85,7 +85,7 @@ public class CacheController extends BasicController {
         cacheService.notifyMetadataChange(Broadcaster.SYNC_ALL, Broadcaster.Event.UPDATE, Broadcaster.SYNC_ALL);
     }
 
-    @RequestMapping(value = "/migration", method = RequestMethod.POST)
+    @RequestMapping(value = "/migration", method = RequestMethod.POST, produces = { "application/json" })
     @ResponseBody
     public void clearCacheForCubeMigration(@RequestBody CubeMigrationRequest request) throws IOException {
         cacheService.clearCacheForCubeMigration(request.getCube(), request.getProject(), request.getModel(), request.getTableToProjects());

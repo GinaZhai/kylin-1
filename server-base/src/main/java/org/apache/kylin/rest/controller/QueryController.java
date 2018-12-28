@@ -182,7 +182,7 @@ public class QueryController extends BasicController {
      * @param runTimeMoreThan in seconds
      * @return
      */
-    @RequestMapping(value = "/query/runningQueries", method = RequestMethod.GET)
+    @RequestMapping(value = "/query/runningQueries", method = RequestMethod.GET, produces = { "application/json" })
     @ResponseBody
     public TreeSet<QueryContext> getRunningQueries(
             @RequestParam(value = "runTimeMoreThan", required = false, defaultValue = "-1") int runTimeMoreThan) {
@@ -193,7 +193,7 @@ public class QueryController extends BasicController {
         }
     }
 
-    @RequestMapping(value = "/query/{queryId}/stop", method = RequestMethod.PUT)
+    @RequestMapping(value = "/query/{queryId}/stop", method = RequestMethod.PUT, produces = { "application/json" })
     @ResponseBody
     public void stopQuery(@PathVariable String queryId) {
         final String user = SecurityContextHolder.getContext().getAuthentication().getName();

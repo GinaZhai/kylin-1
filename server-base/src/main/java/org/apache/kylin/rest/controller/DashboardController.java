@@ -55,14 +55,14 @@ public class DashboardController extends BasicController {
     @Autowired
     private CubeService cubeService;
 
-    @RequestMapping(value = "/metric/cube", method = { RequestMethod.GET })
+    @RequestMapping(value = "/metric/cube", method = { RequestMethod.GET } , produces = { "application/json" })
     @ResponseBody
     public MetricsResponse getCubeMetrics(@RequestParam(value = "projectName", required = false) String projectName, @RequestParam(value = "cubeName", required = false) String cubeName) {
         checkAuthorization(projectName);
         return dashboardService.getCubeMetrics(projectName, cubeName);
     }
 
-    @RequestMapping(value = "/metric/query", method = RequestMethod.GET)
+    @RequestMapping(value = "/metric/query", method = RequestMethod.GET, produces = { "application/json" })
     @ResponseBody
     public MetricsResponse getQueryMetrics(@RequestParam(value = "projectName", required = false) String projectName, @RequestParam(value = "cubeName", required = false) String cubeName, @RequestParam(value = "startTime") String startTime, @RequestParam(value = "endTime") String endTime) {
         checkAuthorization(projectName);
@@ -81,7 +81,7 @@ public class DashboardController extends BasicController {
         return queryMetrics;
     }
 
-    @RequestMapping(value = "/metric/job", method = RequestMethod.GET)
+    @RequestMapping(value = "/metric/job", method = RequestMethod.GET, produces = { "application/json" })
     @ResponseBody
     public MetricsResponse getJobMetrics(@RequestParam(value = "projectName", required = false) String projectName, @RequestParam(value = "cubeName", required = false) String cubeName, @RequestParam(value = "startTime") String startTime, @RequestParam(value = "endTime") String endTime) {
         checkAuthorization(projectName);
@@ -100,7 +100,7 @@ public class DashboardController extends BasicController {
         return jobMetrics;
     }
 
-    @RequestMapping(value = "/chart/{category}/{metric}/{dimension}", method = RequestMethod.GET)
+    @RequestMapping(value = "/chart/{category}/{metric}/{dimension}", method = RequestMethod.GET, produces = { "application/json" })
     @ResponseBody
     public MetricsResponse getChartData(@PathVariable String dimension, @PathVariable String metric, @PathVariable String category, @RequestParam(value = "projectName", required = false) String projectName, @RequestParam(value = "cubeName", required = false) String cubeName, @RequestParam(value = "startTime") String startTime, @RequestParam(value = "endTime") String endTime) {
         checkAuthorization(projectName);
